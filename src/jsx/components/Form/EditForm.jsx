@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import styles from './Form.module.scss';
 import initialState from './initialState';
@@ -8,7 +8,7 @@ import { ReactComponent as Icon } from './edit.svg';
 import fields from './fields';
 import Input from './Input/Input';
 import Button from '../Button/Button';
-import { editInfoCard, editNameCard, getInfoCard } from '../../../shared/services/api';
+import { editNameCard, getInfoCard } from '../../../shared/services/api';
 import Spinner from '../Spinner/Spinner';
 
 const EditForm = ({ onClose }) => {
@@ -16,7 +16,6 @@ const EditForm = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
   const { id } = useParams();
-  console.log('idModal: ', id);
 
   const { name, orgname, datecreate } = data;
 
