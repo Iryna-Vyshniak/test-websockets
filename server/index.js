@@ -34,7 +34,7 @@ app.get('/', (req, res, next) => {
 });
 
 // GET ALL CARD INFO
-app.get('/api/info', cors(corsOptions), (req, res, next) => {
+app.get('/test/info', cors(corsOptions), (req, res, next) => {
   console.log('GET ALL CARD INFO route hit');
   db.all('SELECT id, name, orgname, datecreate FROM info ORDER BY id DESC', [], (err, rows) => {
     if (err) {
@@ -48,7 +48,7 @@ app.get('/api/info', cors(corsOptions), (req, res, next) => {
 });
 
 // GET ONE INFO CARD BY ID
-app.get('/api/info/:id', cors(corsOptions), (req, res, next) => {
+app.get('/test/info/:id', cors(corsOptions), (req, res, next) => {
   const query = `SELECT * FROM info WHERE id = ?;`;
   const params = [req.params.id];
   return db.each(query, params, (err, row) => {
@@ -65,7 +65,7 @@ app.get('/api/info/:id', cors(corsOptions), (req, res, next) => {
 });
 
 // CREATE NEW INFO CARD
-app.post('/api/add', cors(corsOptions), (req, res, next) => {
+app.post('/test/add', cors(corsOptions), (req, res, next) => {
   const data = req.body.data;
   console.log('data: ', data);
   const errors = [];
@@ -100,7 +100,7 @@ app.post('/api/add', cors(corsOptions), (req, res, next) => {
 });
 
 // EDIT INFO by ID all fields
-app.patch('/api/edit/:id', cors(corsOptions), (req, res, next) => {
+app.patch('/test/edit/:id', cors(corsOptions), (req, res, next) => {
   const id = req.params.id;
   const data = {
     name: req.body.name,
@@ -131,7 +131,7 @@ app.patch('/api/edit/:id', cors(corsOptions), (req, res, next) => {
 });
 
 // EDIT INFO by ID all only name
-app.patch('/api/edit-name/:id', cors(corsOptions), (req, res, next) => {
+app.patch('/test/edit-name/:id', cors(corsOptions), (req, res, next) => {
   const id = req.params.id;
   const data = {
     name: req.body.name

@@ -8,7 +8,7 @@ const OrgPage = lazy(() => import('./pages/OrgPage/OrgPage'));
 
 function App() {
   return (
-    <BrowserRouter basename="/">
+    <BrowserRouter basename="/test">
       <Suspense fallback={<p>...Loading</p>}>
         <Routes>
           <Route path="/" element={<Layout />}>
