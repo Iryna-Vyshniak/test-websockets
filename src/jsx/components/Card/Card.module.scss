@@ -1,0 +1,61 @@
+.form {
+    width: 400px;
+    margin-bottom: 25px;
+}
+
+.datatable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.datatable th,
+.datatable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.datatable th {
+    background-color: rgb(134, 170, 215);
+}
+
+.datatable tr:hover {
+    background-color: rgb(191, 219, 254);
+}
+
+.datatable a {
+    text-decoration: none;
+    color: #333;
+}
+
+.rowLink {
+    display: block;
+    text-decoration: none;
+    color: #333;
+}
+
+.rowLink:hover {
+    background-color: rgb(191, 219, 254);
+}
+
+.Button {
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    box-shadow: 0px 3.43693px 3.43693px 0px rgba(0, 0, 0, 0.25);
+    transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.active,
+    &:hover,
+    &:focus {
+        svg {
+            transform: rotate(360deg);
+        }
+
+        box-shadow: rgba(255, 255, 255, 0.1) -0.5px -0.5px 1px,
+        rgba(0, 0, 0, 0.5) 0.5px 0.5px 1px;
+    }
+}

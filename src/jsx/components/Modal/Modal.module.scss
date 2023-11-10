@@ -1,0 +1,96 @@
+.overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    background-color: rgba(18, 20, 23, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #fff;
+    background: linear-gradient(180deg, var(--gray-200) 0%, var(--white) 100%);
+    border-radius: 24px;
+    padding: 15px;
+    max-width: 320px;
+    overflow: hidden;
+
+    border-radius: 24px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+
+    @media (min-width: 768px) {
+        padding: 20px;
+        max-width: 100%;
+        max-height: 600px;
+        top: 40%;
+    }
+
+    @media (max-width: 1080px) {
+        top: 50%;
+        padding: 30px;
+        max-width: 100%;
+        height: 600px;
+    }
+
+    @media (min-width: 1440px) {
+        top: 50%;
+        padding: 40px;
+        max-width: 100%;
+        max-height: 100%;
+    }
+}
+
+.close {
+    position: absolute;
+    color: rgb(2, 1, 19);
+    top: 10px;
+    right: 20px;
+    z-index: 110;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    padding: 4px;
+
+    font-size: 14px;
+    line-height: 1.2;
+    font-weight: 600;
+
+    color: var(--main-color);
+    border-radius: 50%;
+    border: 3px solid var(--main-color);
+    transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+
+    box-shadow: rgba(255, 255, 255, 0.1) -1px -1px 1px,
+        rgba(0, 0, 0, 0.5) 1px 1px 1px;
+    text-shadow: 0.5px 0.5px 1px #303078;
+
+    &.active,
+    &:hover,
+    &:focus {
+        color: var(--white);
+        background-color: #84a5dc;
+        box-shadow: rgba(255, 255, 255, 0.1) -0.5px -0.5px 1px,
+            rgba(0, 0, 0, 0.5) 0.5px 0.5px 1px;
+    }
+}

@@ -1,0 +1,37 @@
+.Label {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 8px;
+    width: 100%;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 18px;
+    color: var(--white);
+}
+
+.Input {
+    padding: 8px 12px;
+    width: 100%;
+}
+
+.InputContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.Icon {
+    position: absolute;
+    right: 8px;
+    fill: #666;
+    width: 20px;
+    height: 20px;
+    transition: fill 0.3s ease;
+}
+
+.Input:focus + .Icon {
+    fill: #007bff;
+}
