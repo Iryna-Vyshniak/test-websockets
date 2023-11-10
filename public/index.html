@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Web site created using create-react-app" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <title>Test</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="modal-root"></div>
+    <div id="root"></div>
+
+    <!-- <script>
+      const ws = new WebSocket('ws://localhost:5000');
+      const handleCloseConnection = () => {
+        ws.close();
+      };
+
+      ws.onopen = () => {
+        // console.log("Connection success");
+        btnCloseConnection.classList.add('visible');
+        btnCloseConnection.addEventListener('click', handleCloseConnection);
+      };
+
+      ws.onmessage = e => {
+        messageList.insertAdjacentHTML('afterbegin', `<li>${e.data}</li>`);
+      };
+
+      ws.onclose = () => {
+        btnCloseConnection.classList.remove('visible');
+        btnCloseConnection.removeEventListener('click', handleCloseConnection);
+        messageList.innerHTML = '';
+      };
+      
+    </script> -->
+  </body>
+</html>
