@@ -1,17 +1,16 @@
-const db = require('./database.js');
+const db = require('../db');
+const HttpError = require('../helpers/HttpError');
+const ctrlWrapper = require('../decorators/ctrlWrapper');
 
-export const getAllInfo = (req, res, next) => {
-  const query = 'SELECT * FROM info;';
-  const params = [];
-  return db.all(query, params, (err, rows) => {
+const getAllInfo = (req, res, next) => {
+  db.all('SELECT id, name, orgname, datecreate FROM info ORDER BY id DESC', [], (err, rows) => {
     if (err) {
-      res.status(400).json({ error: err.message });
-      return;
+      throw HttpError(500, 'Server error');
+    } else {
+      console.log('Data retrieved successfully');
+      res.status(200).json(rows);
     }
-    res.status(200);
-    res.json({
-      message: 'success',
-      data: rows
-    });
   });
 };
+
+module.exports = ctrlWrapper(getAllInfo);
