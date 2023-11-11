@@ -1,81 +1,59 @@
-// const express = require('express');
-// const http = require('http');
-// const WebSocket = new require('ws');
-// const sqlite3 = require('sqlite3').verbose();
-// const cors = require('cors');
-// const { nanoid } = require('nanoid');
+/* 1. Запуск сервера
+    - установить и настроить nodejs
+    - установить и настроить websocket
+    - установить и настроить sqlite
 
-// const server = http.createServer(express);
-// const wsServer = new WebSocket.Server({ server });
+2. Интерфейс
+    - используя react, react-dom создать web приложение
+    - создать страницу DesktopPage:
+        function DesktopPage(props) {
+            const [data, setData] = useState([]);
 
-// const db = new sqlite3.Database('./clientdata.db', err => {
-//   if (err) {
-//     console.log(err);
-//   } else {
-//     console.log('Connection succsess');
-//   }
-// });
+            useEffect(() => {
+                ...
+            });
 
-// const PORT = 3001;
-// const PORT2 = 5000;
+            return (
+                <Row>
+                    <Card
+                        ...
+                    />
+                    <Button
+                        text="Add"
+                        ...
+                    />
+                </Row>
+            );
+        }
+    - при нажатии на кнопку "Add" открыть Popup окно
+    - Popup:
+        - поле ввода имени (input name)
+        - поле ввода организации (input orgName)
+        - кнопка OK -> создать файл базы данных orgName.sqlite с таблицей info (name, orgname, datecreate)
+        - кнопка Cancel
+    - Card:
+        - header  -> name
+        - content -> orgName
+        - onClick -> перейти на страницу OrgPage -> вывод информации из таблицы info
+                                                 -> кнопка settings (открыть Popup окно с редактированием name)
 
-// db.run(
-//   `CREATE TABLE IF NOT EXISTS info(
-//     id INTEGER PRIMARY KEY AUTOINCREMENT,
-//     name TEXT,
-//     orgname TEXT,
-//     datecreate TEXT,
-//     )`,
-//   err => {
-//     if (err) {
-//       console.error(err);
-//     } else {
-//       console.log('Table create success');
-//     }
-//   }
-// );
+3. Компановка
+    - проект упаковать с помощью webpack
 
-// wsServer.on('connection', (ws, req) => {
-//   ws.id = nanoid();
-//   console.log(ws.id);
-
-//   const ip = req.socket.remoteAddress;
-//   console.log(`${ip} is now connected`);
-
-//   ws.on('info', function incoming(data) {
-//     const bytesString = String.fromCharCode(...data);
-//     db.run(
-//       `INSERT INTO info (id, name, orgname, datacreate) VALUES (?, ?, ?, ?)`,
-//       [ws.id, bytesString],
-//       function (err) {
-//         console.log(err);
-//       }
-//     );
-//     wsServer.clients.forEach(function each(client) {
-//       if (client !== ws && client.readyState === WebSocket.OPEN) {
-//         client.send(bytesString);
-//       }
-//     });
-//   });
-// });
-
-// const app = express();
-
-// app.use(cors());
-
-// app.get('/', (req, res) => {
-//   let arr = [];
-//   db.all('SELECT * FROM info', (err, rows) => {
-//     if (err) {
-//       console.error(err);
-//     } else {
-//       rows.forEach(row => arr.push(row));
-//       res.send(arr);
-//     }
-//   });
-//   console.log('there was a get req');
-// });
-
-// // app.listen(PORT2);
-// // server.listen(PORT);
-// console.log(PORT, PORT2);
+4. Структура проекта
+    testpro --
+             - build
+             - src   --
+                      - jsx      --
+                                  - DesktopPage.jsx
+                                  - main.jsx
+                                  - ...
+                      - scss     --
+                                  - colors.scss
+                                  - main.scss
+                                  - ...
+                      - index.js
+                      - webpack.config.js
+                      - ...
+             - ...
+ */

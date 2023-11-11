@@ -14,29 +14,5 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="modal-root"></div>
     <div id="root"></div>
-
-    <!-- <script>
-      const ws = new WebSocket('ws://localhost:5000');
-      const handleCloseConnection = () => {
-        ws.close();
-      };
-
-      ws.onopen = () => {
-        // console.log("Connection success");
-        btnCloseConnection.classList.add('visible');
-        btnCloseConnection.addEventListener('click', handleCloseConnection);
-      };
-
-      ws.onmessage = e => {
-        messageList.insertAdjacentHTML('afterbegin', `<li>${e.data}</li>`);
-      };
-
-      ws.onclose = () => {
-        btnCloseConnection.classList.remove('visible');
-        btnCloseConnection.removeEventListener('click', handleCloseConnection);
-        messageList.innerHTML = '';
-      };
-      
-    </script> -->
   </body>
 </html>

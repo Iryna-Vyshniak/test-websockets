@@ -1,12 +1,11 @@
 const express = require('express');
 const cors = require('cors');
+const http = require('http');
+const { WebSocketServer } = require('ws');
 
 const app = express();
 const bodyParser = require('body-parser');
 const db = require('./db.js');
-
-// const { createServer } = require('http');
-// const webSocket = require('ws');
 
 const corsOptions = {
   origin: ['http://localhost:3000', 'https://iryna-vyshniak.github.io'],
@@ -15,39 +14,22 @@ const corsOptions = {
 
 // Adding BodyParser to parse the body of POST requests.
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-
-app.use((req, res, next) => {
-  const allowedOrigins = ['http://localhost:3000', 'https://iryna-vyshniak.github.io'];
-  const origin = req.headers.origin;
-
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept'
-  );
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  next();
-});
+app.use(express.json());
+app.use(cors({ origin: '*' }));
 
 // ROOT ENDPOINT
-app.get('/', (req, res, next) => {
+app.get('/test', (req, res, next) => {
   res.json({ message: 'Ok' });
 });
 
 // GET ALL CARD INFO
 app.get('/test/info', cors(corsOptions), (req, res, next) => {
-  console.log('GET ALL CARD INFO route hit');
   db.all('SELECT id, name, orgname, datecreate FROM info ORDER BY id DESC', [], (err, rows) => {
     if (err) {
       console.error('Error retrieving data:', err);
       res.status(500).json({ error: 'Internal Server Error' });
     } else {
-      console.log('Data retrieved successfully:', rows);
+      console.log('Data retrieved successfully');
       res.status(200).json(rows);
     }
   });
@@ -73,7 +55,7 @@ app.get('/test/info/:id', cors(corsOptions), (req, res, next) => {
 // CREATE NEW INFO CARD
 app.post('/test/add', cors(corsOptions), (req, res, next) => {
   const data = req.body.data;
-  console.log('data: ', data);
+
   const errors = [];
 
   if (!data.name || !data.orgname || !data.datecreate) {
@@ -100,7 +82,7 @@ app.post('/test/add', cors(corsOptions), (req, res, next) => {
     res.status(201).json({
       message: 'success',
       data,
-      id: this.lastID // Use lastID to get the ID of the last inserted row
+      id: this.lastID
     });
   });
 });
@@ -144,7 +126,7 @@ app.patch('/test/edit-name/:id', cors(corsOptions), (req, res, next) => {
   };
 
   const query = `UPDATE info SET
-    name = COALESCE(?, name),
+    name = COALESCE(?, name)
     WHERE id = ?;`;
 
   const params = [data.name, id];
@@ -163,9 +145,63 @@ app.patch('/test/edit-name/:id', cors(corsOptions), (req, res, next) => {
   });
 });
 
-// SERVER PORT
+// ------------------------------------------------------------------------
+
+// PORTs
 const HTTP_PORT = process.env.PORT || 5000;
-// START SERVER
-app.listen(HTTP_PORT, () => {
-  console.log(`Job Dispatch API running on port: ${HTTP_PORT}!`);
+const WS_PORT = process.env.WS_PORT || 8080;
+
+const httpServer = http.createServer(app);
+const wsServer = new WebSocketServer({ port: WS_PORT });
+
+httpServer.listen(HTTP_PORT, () => {
+  console.log(`HTTP Server running on port: ${HTTP_PORT}`);
+});
+
+console.log(`WebSocket Server running on port: ${WS_PORT}`);
+
+//  Websocket
+
+function heartbeat() {
+  this.isAlive = true;
+}
+
+wsServer.on('connection', (ws, req) => {
+  ws.isAlive = true;
+
+  const numClients = wsServer.clients.size;
+  console.log(`Clients connected: ${numClients}`);
+
+  if (ws.readyState === ws.OPEN) {
+    ws.send('Welcome to my server');
+  }
+
+  ws.on('message', message => {
+    const parsedMessage = JSON.parse(message);
+
+    if (parsedMessage.event === 'message') {
+      console.log(`Received message: ${parsedMessage.payload}`);
+    }
+
+    if (parsedMessage.event === 'createUser') {
+      console.log(`Created user: ${JSON.stringify(parsedMessage.payload)}`);
+    }
+  });
+
+  ws.on('error', console.error);
+  ws.on('pong', heartbeat);
+});
+
+const interval = setInterval(function ping() {
+  wsServer.clients.forEach(function each(ws) {
+    if (ws.isAlive === false) return ws.terminate();
+
+    ws.isAlive = false;
+    ws.ping();
+  });
+}, 30000);
+
+wsServer.on('close', function close() {
+  console.log('WebSocket connection closed');
+  clearInterval(interval);
 });
