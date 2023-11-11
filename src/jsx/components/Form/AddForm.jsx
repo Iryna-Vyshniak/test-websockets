@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
+import { notifyOptions } from '../../../shared/utils/notify';
 
 import styles from './Form.module.scss';
 import Input from './Input/Input';
@@ -7,7 +9,8 @@ import fields from './fields';
 import initialState from './initialState';
 import { addInfoCard } from '../../../shared/services/api';
 
-const AddForm = ({ onClose }) => {
+const AddForm = ({ onClose, handleCreate, handleSend }) => {
+  // console.log('ws ', ws);
   const [data, setData] = useState(initialState);
 
   const { name, orgname, datecreate } = data;
@@ -40,11 +43,12 @@ const AddForm = ({ onClose }) => {
   const handleSubmit = async () => {
     try {
       const result = await addInfoCard({ data });
-
+      handleCreate(result);
+      handleSend();
       onClose();
-      return result;
     } catch (error) {
       console.error(error);
+      toast.error(`Info didn't create`, notifyOptions);
     }
   };
 

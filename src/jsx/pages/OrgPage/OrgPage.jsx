@@ -10,7 +10,7 @@ import Modal from '../../components/Modal/Modal';
 import Button from '../../components/Button/Button';
 import Spinner from '../../components/Spinner/Spinner';
 
-const OrgPage = () => {
+const OrgPage = ({ handleCreate, handleSend }) => {
   const [showModal, setShowModal] = useState(false);
 
   const [data, setData] = useState();
@@ -48,7 +48,7 @@ const OrgPage = () => {
     <>
       {showModal && (
         <Modal close={onCloseModal}>
-          <EditForm onClose={onCloseModal} />
+          <EditForm onClose={onCloseModal} handleCreate={handleCreate} handleSend={handleSend} />
         </Modal>
       )}
       {isLoading && <Spinner />}

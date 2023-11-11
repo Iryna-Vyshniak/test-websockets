@@ -8,7 +8,6 @@ const modalRoot = document.getElementById('modal-root');
 const Modal = ({ close, children }) => {
   const handleClose = ({ target, currentTarget, code }) => {
     if (target === currentTarget || code === 'Escape') {
-      console.log('close');
       close();
     }
   };

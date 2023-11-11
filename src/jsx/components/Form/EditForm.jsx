@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { notifyOptions } from '../../../shared/utils/notify';
 
 import styles from './Form.module.scss';
 import initialState from './initialState';
@@ -11,7 +13,7 @@ import Button from '../Button/Button';
 import { editNameCard, getInfoCard } from '../../../shared/services/api';
 import Spinner from '../Spinner/Spinner';
 
-const EditForm = ({ onClose }) => {
+const EditForm = ({ onClose, handleCreate, handleSend }) => {
   const [data, setData] = useState(initialState);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -62,13 +64,15 @@ const EditForm = ({ onClose }) => {
     return data.name === '' || data.orgname === '' || data.datecreate === '';
   };
 
-  const onClickSubmit = async () => {
+  const onClickSubmit = async e => {
+    // e.preventDefault();
     try {
       const result = await editNameCard(data);
-      console.log('RESULT: ', result.data.data);
-      return result.data.data;
+      handleCreate(result.data.data);
+      handleSend();
     } catch (error) {
       console.error(error);
+      toast.error('Info didn`t update', notifyOptions);
     }
   };
 

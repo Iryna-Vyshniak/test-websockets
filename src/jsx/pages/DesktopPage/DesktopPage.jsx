@@ -1,18 +1,15 @@
-// import { io } from 'socket.io-client';
 import { useEffect, useState } from 'react';
-// import styles from './DesktopPage.module.scss';
-// import { nanoid } from 'nanoid';
+
 import Card from '../../components/Card/Card';
 import Button from '../../components/Button/Button';
 import Modal from '../../components/Modal/Modal';
 import AddForm from '../../components/Form/AddForm';
 
-// import { getALL } from '../../../shared/services/api';
 import Spinner from '../../components/Spinner/Spinner';
 import { getALL } from '../../../shared/services/api';
-// import TableCard from '../../components/Table/Table';
 
-const DesktopPage = () => {
+const DesktopPage = ({ handleCreate, handleSend }) => {
+  // console.log('ws: ', ws);
   const [showModal, setShowModal] = useState(false);
 
   const [data, setData] = useState();
@@ -45,22 +42,13 @@ const DesktopPage = () => {
     setShowModal(false);
   };
 
-  // useEffect(() => {
-  //   setSocket(io('http://localhost:5000'));
-  // }, []);
-
-  // useEffect(() => {
-  //   socket?.emit('newUser', user);
-  // }, [socket, user]);
-
   return (
     <>
       {showModal && (
         <Modal close={onCloseModal}>
-          <AddForm onClose={onCloseModal} />
+          <AddForm onClose={onCloseModal} handleCreate={handleCreate} handleSend={handleSend} />
         </Modal>
       )}
-      {/* <div className={styles.DesktopPage}>{user}</div> */}
       <Button text="Add" onClick={onShowModal} />
       {isLoading && <Spinner />}
       {error && <div>Opps, error... Please, wait or update page</div>}
