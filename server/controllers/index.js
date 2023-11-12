@@ -1,13 +1,13 @@
 const getAllInfo = require('./getAllInfo');
+const addInfoCard = require('./addInfoCard');
+const editInfoCard = require('./editInfoCard');
+const editNameCard = require('./editNameCard');
 const getInfoById = require('./getInfoById');
-const addInfo = require('./addInfo');
-const editAllInfo = require('./editAllInfo');
-const editInfoName = require('./editInfoName');
 
 module.exports = {
   getAllInfo,
-  getInfoById,
-  addInfo,
-  editAllInfo,
-  editInfoName
+  addInfoCard,
+  editInfoCard,
+  editNameCard,
+  getInfoById
 };

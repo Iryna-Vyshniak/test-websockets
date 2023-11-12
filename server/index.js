@@ -5,25 +5,20 @@ const { WebSocketServer } = require('ws');
 
 const app = express();
 const bodyParser = require('body-parser');
-const infoRouter = require('./routes/api/info');
 
-// const corsOptions = {
-//   origin: ['http://localhost:3000', 'https://iryna-vyshniak.github.io'],
-//   optionsSuccessStatus: 200
-// };
+const ctrl = require('./controllers');
 
 // Adding BodyParser to parse the body of POST requests.
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.json());
+app.use(bodyParser.json());
 app.use(cors({ origin: '*' }));
-
-app.use('/test', infoRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: 'Not found' });
 });
 
 app.use((err, req, res, next) => {
+  console.error(err.stack);
   const { status = 500, message = 'Server error' } = err;
   res.status(status).json({ message });
 });
@@ -33,6 +28,7 @@ const HTTP_PORT = process.env.PORT || 5000;
 const WS_PORT = process.env.WS_PORT || 8080;
 
 const httpServer = http.createServer(app);
+
 const wsServer = new WebSocketServer({ port: WS_PORT });
 
 httpServer.listen(HTTP_PORT, () => {
@@ -47,25 +43,66 @@ function heartbeat() {
   this.isAlive = true;
 }
 
-wsServer.on('connection', (ws, req) => {
+wsServer.on('connection', ws => {
   ws.isAlive = true;
+
+  console.log('WebSocket connected');
 
   const numClients = wsServer.clients.size;
   console.log(`Clients connected: ${numClients}`);
 
-  if (ws.readyState === ws.OPEN) {
-    ws.send('Welcome to my server');
-  }
-
-  ws.on('message', message => {
+  ws.on('message', async message => {
     const parsedMessage = JSON.parse(message);
 
-    if (parsedMessage.event === 'message') {
-      console.log(`Received message: ${parsedMessage.payload}`);
-    }
+    switch (parsedMessage.event) {
+      case 'getAllInfo':
+        try {
+          const rows = await ctrl.getAllInfo();
+          ws.send(JSON.stringify({ event: 'getAllInfo', data: rows }));
+        } catch (error) {
+          console.error(error);
+        }
+        break;
 
-    if (parsedMessage.event === 'createUser') {
-      console.log(`Created user: ${JSON.stringify(parsedMessage.payload)}`);
+      case 'addInfoCard':
+        try {
+          const insertedInfo = await ctrl.addInfoCard(parsedMessage.data);
+          ws.send(JSON.stringify({ event: 'addInfoCard', data: insertedInfo }));
+        } catch (error) {
+          console.error(error);
+        }
+        break;
+
+      case 'editInfoCard':
+        try {
+          const updatedInfo = await ctrl.editInfoCard(parsedMessage.data);
+          ws.send(JSON.stringify({ event: 'editInfoCard', data: updatedInfo }));
+        } catch (error) {
+          console.error(error);
+        }
+        break;
+
+      case 'editNameCard':
+        try {
+          const updatedInfo = await ctrl.editNameCard(parsedMessage.data);
+          ws.send(JSON.stringify({ event: 'editNameCard', data: updatedInfo }));
+        } catch (error) {
+          console.error(error);
+        }
+        break;
+
+      case 'getInfoCardById':
+        try {
+          const id = parsedMessage.data.id;
+          const info = await ctrl.getInfoById(id);
+          ws.send(JSON.stringify({ event: 'getInfoCardById', data: info }));
+        } catch (error) {
+          console.error(error);
+        }
+        break;
+
+      default:
+        ws.send(JSON.stringify({ event: 'error', payload: 'Invalid event' }));
     }
   });
 
