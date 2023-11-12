@@ -4,13 +4,13 @@ import { useParams } from 'react-router-dom';
 import styles from './OrgPage.module.scss';
 
 import { ReactComponent as Icon } from './icon.svg';
-import { getInfoCard } from '../../../shared/services/api';
 import EditForm from '../../components/Form/EditForm';
 import Modal from '../../components/Modal/Modal';
 import Button from '../../components/Button/Button';
 import Spinner from '../../components/Spinner/Spinner';
+import { sendWebSocketMessage } from '../../WebSocketClient';
 
-const OrgPage = ({ handleCreate, handleSend }) => {
+const OrgPage = () => {
   const [showModal, setShowModal] = useState(false);
 
   const [data, setData] = useState();
@@ -24,9 +24,12 @@ const OrgPage = ({ handleCreate, handleSend }) => {
         setIsLoading(true);
         setError(false);
 
-        const result = await getInfoCard(id);
-
-        setData(result.data);
+        sendWebSocketMessage('getInfoCardById', { id }, receivedData => {
+          if (!data) {
+            setData(receivedData.data);
+          }
+          setIsLoading(false);
+        });
       } catch (error) {
         setError(true);
         console.log(error.message);
@@ -34,7 +37,7 @@ const OrgPage = ({ handleCreate, handleSend }) => {
         setIsLoading(false);
       }
     })();
-  }, [id]);
+  }, [id, data]);
 
   const onShowModal = () => {
     setShowModal(true);
@@ -48,7 +51,7 @@ const OrgPage = ({ handleCreate, handleSend }) => {
     <>
       {showModal && (
         <Modal close={onCloseModal}>
-          <EditForm onClose={onCloseModal} handleCreate={handleCreate} handleSend={handleSend} />
+          <EditForm onClose={onCloseModal} />
         </Modal>
       )}
       {isLoading && <Spinner />}

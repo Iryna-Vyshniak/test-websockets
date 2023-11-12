@@ -6,12 +6,10 @@ import Modal from '../../components/Modal/Modal';
 import AddForm from '../../components/Form/AddForm';
 
 import Spinner from '../../components/Spinner/Spinner';
-import { getALL } from '../../../shared/services/api';
+import { sendWebSocketMessage } from '../../WebSocketClient';
 
-const DesktopPage = ({ handleCreate, handleSend }) => {
-  // console.log('ws: ', ws);
+const DesktopPage = () => {
   const [showModal, setShowModal] = useState(false);
-
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -22,9 +20,16 @@ const DesktopPage = ({ handleCreate, handleSend }) => {
         setIsLoading(true);
         setError(false);
 
-        const data = await getALL();
+        // Send a message to the WebSocket server to get all info
+        sendWebSocketMessage('getAllInfo', null, receivedData => {
+          // Check if we have already received data
+          if (!data) {
+            setData(receivedData.data);
+          }
+          setIsLoading(false);
 
-        setData(data);
+          // console.log(data);
+        });
       } catch (error) {
         setError(true);
         console.log(error.message);
@@ -32,7 +37,7 @@ const DesktopPage = ({ handleCreate, handleSend }) => {
         setIsLoading(false);
       }
     })();
-  }, []);
+  }, [data]);
 
   const onShowModal = () => {
     setShowModal(true);
@@ -46,7 +51,7 @@ const DesktopPage = ({ handleCreate, handleSend }) => {
     <>
       {showModal && (
         <Modal close={onCloseModal}>
-          <AddForm onClose={onCloseModal} handleCreate={handleCreate} handleSend={handleSend} />
+          <AddForm onClose={onCloseModal} />
         </Modal>
       )}
       <Button text="Add" onClick={onShowModal} />

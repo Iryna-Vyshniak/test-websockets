@@ -7,10 +7,9 @@ import Input from './Input/Input';
 import Button from '../Button/Button';
 import fields from './fields';
 import initialState from './initialState';
-import { addInfoCard } from '../../../shared/services/api';
+import { sendWebSocketMessage } from '../../WebSocketClient';
 
-const AddForm = ({ onClose, handleCreate, handleSend }) => {
-  // console.log('ws ', ws);
+const AddForm = ({ onClose }) => {
   const [data, setData] = useState(initialState);
 
   const { name, orgname, datecreate } = data;
@@ -42,10 +41,13 @@ const AddForm = ({ onClose, handleCreate, handleSend }) => {
 
   const handleSubmit = async () => {
     try {
-      const result = await addInfoCard({ data });
-      handleCreate(result);
-      handleSend();
-      onClose();
+      await sendWebSocketMessage('addInfoCard', data, receivedData => {
+        // Check if we have already received data
+        if (!data) {
+          setData(receivedData.data);
+          onClose();
+        }
+      });
     } catch (error) {
       console.error(error);
       toast.error(`Info didn't create`, notifyOptions);

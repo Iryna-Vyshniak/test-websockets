@@ -10,10 +10,10 @@ import { ReactComponent as Icon } from './edit.svg';
 import fields from './fields';
 import Input from './Input/Input';
 import Button from '../Button/Button';
-import { editNameCard, getInfoCard } from '../../../shared/services/api';
 import Spinner from '../Spinner/Spinner';
+import { sendWebSocketMessage } from '../../WebSocketClient';
 
-const EditForm = ({ onClose, handleCreate, handleSend }) => {
+const EditForm = ({ onClose }) => {
   const [data, setData] = useState(initialState);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -27,9 +27,12 @@ const EditForm = ({ onClose, handleCreate, handleSend }) => {
         setIsLoading(true);
         setError(false);
 
-        const result = await getInfoCard(id);
-
-        setData(result.data);
+        await sendWebSocketMessage('getInfoCardById', { id }, receivedData => {
+          if (data) {
+            setData(receivedData.data);
+          }
+        });
+        setIsLoading(false);
       } catch (error) {
         setError(true);
         console.log(error.message);
@@ -37,6 +40,7 @@ const EditForm = ({ onClose, handleCreate, handleSend }) => {
         setIsLoading(false);
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const onChangeName = event => {
@@ -64,12 +68,15 @@ const EditForm = ({ onClose, handleCreate, handleSend }) => {
     return data.name === '' || data.orgname === '' || data.datecreate === '';
   };
 
-  const onClickSubmit = async e => {
-    // e.preventDefault();
+  const onClickSubmit = async () => {
     try {
-      const result = await editNameCard(data);
-      handleCreate(result.data.data);
-      handleSend();
+      await sendWebSocketMessage('editNameCard', data, receivedData => {
+        // Check if we have already received data
+        if (!data) {
+          setData(receivedData.data.data);
+          onClose();
+        }
+      });
     } catch (error) {
       console.error(error);
       toast.error('Info didn`t update', notifyOptions);
