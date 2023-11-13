@@ -8,14 +8,25 @@ const connectWebSocket = url => {
     console.log('WebSocket connected');
   };
 
-  ws.onmessage = event => {
-    const data = JSON.parse(event.data);
-    handleMessage(data);
+  // ws.onmessage = event => {
+  //   const data = JSON.parse(event.data);
+  //   handleMessage(data);
+  // };
+
+  ws.onerror = error => {
+    console.error('WebSocket error:', error);
+  };
+
+  ws.onclose = event => {
+    console.log('WebSocket closed:', event);
   };
 };
 
+const on = (event, handler) => {
+  messageHandlers[event] = handler;
+};
+
 const handleMessage = data => {
-  console.log('data: ', data);
   const { event, payload } = data;
 
   const handler = messageHandlers[event];
@@ -24,10 +35,6 @@ const handleMessage = data => {
   } else {
     console.log('No handler for message event:', event);
   }
-};
-
-const on = (event, handler) => {
-  messageHandlers[event] = handler;
 };
 
 const sendWebSocketMessage = (event, data, callback) => {
@@ -40,11 +47,22 @@ const sendWebSocketMessage = (event, data, callback) => {
   ws.onmessage = event => {
     const receivedData = JSON.parse(event.data);
     // Invoke the callback with the received data
-    callback(receivedData);
+    if (callback) {
+      callback(receivedData);
+    } else {
+      handleMessage(receivedData);
+    }
   };
 
   // Send the message to the server
   ws.send(JSON.stringify({ event, data }));
 };
 
-export { handleMessage, connectWebSocket, sendWebSocketMessage, on, ws };
+const closeWebSocket = () => {
+  if (ws) {
+    ws.close();
+    console.log('WebSocket connection closed');
+  }
+};
+
+export { connectWebSocket, sendWebSocketMessage, on, closeWebSocket };
