@@ -11,6 +11,7 @@ import { sendWebSocketMessage } from '../../../WebSocketClient';
 
 const AddForm = ({ onClose }) => {
   const [data, setData] = useState(initialState);
+  const [websocketReady, setWebsocketReady] = useState(false);
 
   const { name, orgname, datecreate } = data;
 
@@ -45,6 +46,7 @@ const AddForm = ({ onClose }) => {
         // Check if we have already received data
         if (!data) {
           setData(receivedData.data);
+          setWebsocketReady(true);
           onClose();
         }
       });
@@ -67,7 +69,7 @@ const AddForm = ({ onClose }) => {
         <Input value={orgname} onChange={onChangeOrg} {...fields.orgname} />
         <Input value={datecreate} onChange={onChangeDate} {...fields.datecreate} />
         <div className={styles.wrappers}>
-          <Button type="submit" text="Ok" disabled={isInputFieldEmpty()} />
+          <Button type="submit" text="Ok" disabled={!websocketReady && isInputFieldEmpty()} />
           <Button type="reset" text="Cancel" onClick={handleReset} />
         </div>
       </form>

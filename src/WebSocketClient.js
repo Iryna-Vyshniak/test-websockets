@@ -8,10 +8,10 @@ const connectWebSocket = url => {
     console.log('WebSocket connected');
   };
 
-  // ws.onmessage = event => {
-  //   const data = JSON.parse(event.data);
-  //   handleMessage(data);
-  // };
+  ws.onmessage = event => {
+    const data = JSON.parse(event.data);
+    handleMessage(data);
+  };
 
   ws.onerror = error => {
     console.error('WebSocket error:', error);
@@ -65,4 +65,4 @@ const closeWebSocket = () => {
   }
 };
 
-export { connectWebSocket, sendWebSocketMessage, on, closeWebSocket };
+export { connectWebSocket, sendWebSocketMessage, on, closeWebSocket, ws };

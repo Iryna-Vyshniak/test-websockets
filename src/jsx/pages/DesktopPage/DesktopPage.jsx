@@ -13,6 +13,15 @@ const DesktopPage = () => {
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [websocketReady, setWebsocketReady] = useState(false);
+
+  const onShowModal = () => {
+    setShowModal(true);
+  };
+
+  const onCloseModal = () => {
+    setShowModal(false);
+  };
 
   useEffect(() => {
     (async () => {
@@ -26,9 +35,8 @@ const DesktopPage = () => {
           if (!data) {
             setData(receivedData.data);
           }
+          setWebsocketReady(true);
           setIsLoading(false);
-
-          // console.log(data);
         });
       } catch (error) {
         setError(true);
@@ -37,15 +45,7 @@ const DesktopPage = () => {
         setIsLoading(false);
       }
     })();
-  }, [data]);
-
-  const onShowModal = () => {
-    setShowModal(true);
-  };
-
-  const onCloseModal = () => {
-    setShowModal(false);
-  };
+  }, [data, websocketReady]);
 
   return (
     <>
@@ -54,7 +54,7 @@ const DesktopPage = () => {
           <AddForm onClose={onCloseModal} />
         </Modal>
       )}
-      <Button text="Add" onClick={onShowModal} />
+      <Button text="Add" onClick={onShowModal} disabled={!websocketReady} />
       {isLoading && <Spinner />}
       {error && <div>Opps, error... Please, wait or update page</div>}
       {!error && !isLoading && data?.length > 0 && (
