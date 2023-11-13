@@ -19,6 +19,7 @@ const connectWebSocket = url => {
 
   ws.onclose = event => {
     console.log('WebSocket closed:', event);
+    setTimeout(() => connectWebSocket(url), 30000);
   };
 };
 

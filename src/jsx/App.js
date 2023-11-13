@@ -11,7 +11,7 @@ const OrgPage = lazy(() => import('./pages/OrgPage/OrgPage'));
 
 function App() {
   useEffect(() => {
-    connectWebSocket('ws://localhost:8080/');
+    connectWebSocket('ws://localhost:5000/test');
 
     on('getAllInfo', data => {
       console.log('Received all info:', data);

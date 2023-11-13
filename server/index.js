@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const http = require('http');
-const { WebSocketServer } = require('ws');
+const WebSocket = require('ws');
 
 const app = express();
 const bodyParser = require('body-parser');
@@ -12,6 +12,7 @@ const ctrl = require('./controllers');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors({ origin: '*' }));
+app.use(express.static('../public'));
 
 app.use((req, res) => {
   res.status(404).json({ message: 'Not found' });
@@ -25,17 +26,14 @@ app.use((err, req, res, next) => {
 
 // PORTs
 const HTTP_PORT = process.env.PORT || 5000;
-const WS_PORT = process.env.WS_PORT || 8080;
 
 const httpServer = http.createServer(app);
 
-const wsServer = new WebSocketServer({ port: WS_PORT });
+const wsServer = new WebSocket.Server({ server: httpServer });
 
 httpServer.listen(HTTP_PORT, () => {
   console.log(`HTTP Server running on port: ${HTTP_PORT}`);
 });
-
-console.log(`WebSocket Server running on port: ${WS_PORT}`);
 
 //  Websocket
 

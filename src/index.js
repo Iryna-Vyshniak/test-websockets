@@ -5,9 +5,8 @@ import './scss/main.scss';
 
 import reportWebVitals from './reportWebVitals';
 import App from './jsx/App';
-import { connectWebSocket } from './WebSocketClient';
 
-connectWebSocket('ws://localhost:8080/');
+// connectWebSocket('ws://localhost:5000/test');
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
