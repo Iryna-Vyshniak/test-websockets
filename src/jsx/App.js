@@ -2,7 +2,7 @@ import { Suspense, lazy } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { on } from './WebSocketClient';
+import { on } from '../WebSocketClient';
 
 import Layout from './components/Layout/Layout';
 const DesktopPage = lazy(() => import('./pages/DesktopPage/DesktopPage'));

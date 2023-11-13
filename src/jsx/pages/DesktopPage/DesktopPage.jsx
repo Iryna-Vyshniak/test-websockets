@@ -6,7 +6,7 @@ import Modal from '../../components/Modal/Modal';
 import AddForm from '../../components/Form/AddForm';
 
 import Spinner from '../../components/Spinner/Spinner';
-import { sendWebSocketMessage } from '../../WebSocketClient';
+import { sendWebSocketMessage } from '../../../WebSocketClient';
 
 const DesktopPage = () => {
   const [showModal, setShowModal] = useState(false);

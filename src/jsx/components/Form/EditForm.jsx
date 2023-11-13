@@ -11,7 +11,7 @@ import fields from './fields';
 import Input from './Input/Input';
 import Button from '../Button/Button';
 import Spinner from '../Spinner/Spinner';
-import { sendWebSocketMessage } from '../../WebSocketClient';
+import { sendWebSocketMessage } from '../../../WebSocketClient';
 
 const EditForm = ({ onClose }) => {
   const [data, setData] = useState(initialState);

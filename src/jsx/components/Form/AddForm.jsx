@@ -7,7 +7,7 @@ import Input from './Input/Input';
 import Button from '../Button/Button';
 import fields from './fields';
 import initialState from './initialState';
-import { sendWebSocketMessage } from '../../WebSocketClient';
+import { sendWebSocketMessage } from '../../../WebSocketClient';
 
 const AddForm = ({ onClose }) => {
   const [data, setData] = useState(initialState);

@@ -8,7 +8,7 @@ import EditForm from '../../components/Form/EditForm';
 import Modal from '../../components/Modal/Modal';
 import Button from '../../components/Button/Button';
 import Spinner from '../../components/Spinner/Spinner';
-import { sendWebSocketMessage } from '../../WebSocketClient';
+import { sendWebSocketMessage } from '../../../WebSocketClient';
 
 const OrgPage = () => {
   const [showModal, setShowModal] = useState(false);
