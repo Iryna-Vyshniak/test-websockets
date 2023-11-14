@@ -2,6 +2,11 @@ let ws;
 const messageHandlers = {};
 
 const connectWebSocket = url => {
+  if (!url) {
+    console.error('WebSocket URL is required');
+    return;
+  }
+
   ws = new WebSocket(url);
 
   ws.onopen = () => {
@@ -9,6 +14,7 @@ const connectWebSocket = url => {
   };
 
   ws.onmessage = event => {
+    console.log('WebSocket message received:', event.data);
     const data = JSON.parse(event.data);
     handleMessage(data);
   };
@@ -19,8 +25,10 @@ const connectWebSocket = url => {
 
   ws.onclose = event => {
     console.log('WebSocket closed:', event);
-    setTimeout(() => connectWebSocket(url), 30000);
+    // setTimeout(() => connectWebSocket(url), 30000);
   };
+
+  return ws;
 };
 
 const on = (event, handler) => {
@@ -28,6 +36,7 @@ const on = (event, handler) => {
 };
 
 const handleMessage = data => {
+  console.log('data: ', data);
   const { event, payload } = data;
 
   const handler = messageHandlers[event];
@@ -39,24 +48,37 @@ const handleMessage = data => {
 };
 
 const sendWebSocketMessage = (event, data, callback) => {
-  if (ws.readyState !== WebSocket.OPEN) {
-    console.error('WebSocket not open');
+  if (!ws || ws.readyState !== WebSocket.OPEN) {
+    console.error('Invalid or closed WebSocket');
     return;
   }
 
-  // Set up the onmessage event to handle the response
-  ws.onmessage = event => {
-    const receivedData = JSON.parse(event.data);
-    // Invoke the callback with the received data
+  const onResponse = async event => {
+    console.log('WebSocket response received:', event.data);
+    const receivedData = await JSON.parse(event.data);
+    console.log('receivedData ON RESPONSE: ', receivedData.data);
+
     if (callback) {
-      callback(receivedData);
+      callback(receivedData.data);
     } else {
       handleMessage(receivedData);
     }
   };
 
-  // Send the message to the server
-  ws.send(JSON.stringify({ event, data }));
+  ws.addEventListener('message', onResponse);
+
+  try {
+    ws.send(JSON.stringify({ event, data }));
+  } catch (error) {
+    console.error('Error sending WebSocket message:', error);
+  }
+
+  const removeListener = () => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.removeEventListener('message', onResponse);
+    }
+  };
+  return removeListener;
 };
 
 const closeWebSocket = () => {
