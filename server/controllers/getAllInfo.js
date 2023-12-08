@@ -1,13 +1,19 @@
+/* eslint-disable no-unused-expressions */
 const db = require('../db');
 
 const getAllInfo = () => {
+  const sql = 'SELECT id, name, orgname, datecreate FROM info ORDER BY id DESC';
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT id, name, orgname, datecreate FROM info ORDER BY id DESC';
     db.all(sql, [], (err, rows) => {
       if (err) {
+        console.log(err.message);
         reject(err);
       } else {
-        resolve(rows);
+        console.log('Get all rows');
+        resolve({
+          message: 'success',
+          data: rows
+        });
       }
     });
   });
