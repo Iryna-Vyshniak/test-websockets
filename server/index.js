@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const http = require('http');
-const WebSocket = require('ws');
+const { createServer } = require('http');
+const { WebSocketServer } = require('ws');
 
 const app = express();
 const bodyParser = require('body-parser');
@@ -25,17 +25,17 @@ app.use((err, req, res, next) => {
 });
 
 // PORTs
-const HTTP_PORT = process.env.PORT || 5000;
+const HTTP_PORT = 5000;
 
-const httpServer = http.createServer(app);
+const server = createServer(app);
 
-const wsServer = new WebSocket.Server({ server: httpServer });
-
-httpServer.listen(HTTP_PORT, () => {
+server.listen(HTTP_PORT, () => {
   console.log(`HTTP Server running on port: ${HTTP_PORT}`);
 });
 
 //  Websocket
+
+const wsServer = new WebSocketServer({ server });
 
 function heartbeat() {
   this.isAlive = true;
@@ -50,9 +50,10 @@ wsServer.on('connection', ws => {
   console.log(`Clients connected: ${numClients}`);
 
   ws.on('message', async message => {
-    const parsedMessage = JSON.parse(message);
+    const { event, data } = JSON.parse(message);
+    console.log('data: ', data);
 
-    switch (parsedMessage.event) {
+    switch (event) {
       case 'getAllInfo':
         try {
           const rows = await ctrl.getAllInfo();
@@ -64,8 +65,7 @@ wsServer.on('connection', ws => {
 
       case 'addInfoCard':
         try {
-          const insertedInfo = await ctrl.addInfoCard(parsedMessage.data);
-          ws.send(JSON.stringify({ event: 'addInfoCard', data: insertedInfo }));
+          ctrl.addInfoCard(data);
         } catch (error) {
           console.error(error);
         }
@@ -73,7 +73,7 @@ wsServer.on('connection', ws => {
 
       case 'editInfoCard':
         try {
-          const updatedInfo = await ctrl.editInfoCard(parsedMessage.data);
+          const updatedInfo = await ctrl.editInfoCard(data);
           ws.send(JSON.stringify({ event: 'editInfoCard', data: updatedInfo }));
         } catch (error) {
           console.error(error);
@@ -82,7 +82,8 @@ wsServer.on('connection', ws => {
 
       case 'editNameCard':
         try {
-          const updatedInfo = await ctrl.editNameCard(parsedMessage.data);
+          const updatedInfo = await ctrl.editNameCard(data);
+          // console.log('updatedInfo: ', updatedInfo);
           ws.send(JSON.stringify({ event: 'editNameCard', data: updatedInfo }));
         } catch (error) {
           console.error(error);
@@ -91,7 +92,7 @@ wsServer.on('connection', ws => {
 
       case 'getInfoCardById':
         try {
-          const id = parsedMessage.data.id;
+          const { id } = data;
           const info = await ctrl.getInfoById(id);
           ws.send(JSON.stringify({ event: 'getInfoCardById', data: info }));
         } catch (error) {
