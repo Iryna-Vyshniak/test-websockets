@@ -5,11 +5,20 @@ const getInfoById = id => {
     const sql = 'SELECT * FROM info WHERE id = ?;';
     const params = [id];
 
-    db.get(sql, params, (err, row) => {
+    db.all(sql, params, (err, row) => {
       if (err) {
         reject(err);
       } else {
-        resolve(row);
+        if (row) {
+          // If row is not null or undefined, return the data
+          resolve({
+            message: 'Success',
+            data: row
+          });
+        } else {
+          // If row is null or undefined, handle the case (e.g., return an error message)
+          reject('Data not found');
+        }
       }
     });
   });
