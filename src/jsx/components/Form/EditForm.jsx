@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { notifyOptions } from '../../../shared/utils/notify';
 
@@ -10,100 +9,55 @@ import { ReactComponent as Icon } from './edit.svg';
 import fields from './fields';
 import Input from './Input/Input';
 import Button from '../Button/Button';
-import Spinner from '../Spinner/Spinner';
-import { sendWebSocketMessage } from '../../../WebSocketClient';
 
-const EditForm = ({ onClose }) => {
-  const [data, setData] = useState(initialState);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const { id } = useParams();
+const EditForm = ({ data, onClose, onData }) => {
+  console.log('data: ', data);
+  const [dataForm, setDataForm] = useState(data ? data : initialState);
 
-  const { name, orgname, datecreate } = data;
+  const { name, orgname, datecreate } = dataForm;
 
   useEffect(() => {
-    (async () => {
-      try {
-        setIsLoading(true);
-        setError(false);
+    data ? setDataForm(data) : setDataForm(initialState);
+  }, [data]);
 
-        await sendWebSocketMessage('getInfoCardById', { id }, receivedData => {
-          if (data) {
-            setData(receivedData.data);
-          }
-        });
-        setIsLoading(false);
-      } catch (error) {
-        setError(true);
-        console.log(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  const onChange = ({ target }) => {
+    const { name: inputName, value, checked, type } = target;
+    const newValue = type === 'checkbox' ? checked : value;
 
-  const onChangeName = event => {
-    setData({
-      ...data,
-      name: event.target.value
-    });
-  };
-
-  const onChangeOrg = event => {
-    setData({
-      ...data,
-      orgname: event.target.value
-    });
-  };
-
-  const onChangeDate = event => {
-    setData({
-      ...data,
-      datecreate: event.target.value
-    });
+    setDataForm(prev => ({
+      ...prev,
+      [inputName]: newValue
+    }));
   };
 
   const isInputFieldEmpty = () => {
     return data.name === '' || data.orgname === '' || data.datecreate === '';
   };
 
-  const onClickSubmit = async () => {
-    try {
-      await sendWebSocketMessage('editNameCard', data, receivedData => {
-        // Check if we have already received data
-        if (!data) {
-          setData(receivedData.data.data);
-          onClose();
-        }
-      });
-    } catch (error) {
-      console.error(error);
-      toast.error('Info didn`t update', notifyOptions);
-    }
+  console.log('dataForm: ', dataForm);
+
+  const onClickSubmit = () => {
+    onData(dataForm);
+    onClose();
   };
 
   const handleReset = e => {
     e.preventDefault();
-    setData({ ...initialState });
+    setDataForm({ ...initialState });
     onClose();
   };
 
   return (
     <div className={styles.wrapper}>
-      {isLoading && <Spinner />}
-      {error && <div>Opps, error... Please, wait or update page</div>}
-      {!isLoading && !error && (
-        <form onSubmit={onClickSubmit} className={styles.form} action="">
-          <Input value={name} onChange={onChangeName} {...fields.name} icon={Icon} />
-          <Input value={orgname} onChange={onChangeOrg} {...fields.orgname} disabled />
-          <Input value={datecreate} onChange={onChangeDate} {...fields.datecreate} disabled />
-          <div className={styles.wrappers}>
-            <Button type="submit" text="Ok" disabled={isInputFieldEmpty()} />
-            <Button type="reset" text="Cancel" onClick={handleReset} />
-          </div>
-        </form>
-      )}
+      <form onSubmit={onClickSubmit} className={styles.form} action="">
+        <Input value={name} onChange={onChange} {...fields.name} icon={Icon} />
+        <Input value={orgname} onChange={onChange} {...fields.orgname} disabled />
+        <Input value={datecreate} onChange={onChange} {...fields.datecreate} disabled />
+        <div className={styles.wrappers}>
+          <Button type="submit" text="Ok" disabled={isInputFieldEmpty()} />
+          <Button type="reset" text="Cancel" onClick={handleReset} />
+        </div>
+      </form>
     </div>
   );
 };
