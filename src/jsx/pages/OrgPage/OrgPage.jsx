@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-expressions */
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -7,37 +9,12 @@ import { ReactComponent as Icon } from './icon.svg';
 import EditForm from '../../components/Form/EditForm';
 import Modal from '../../components/Modal/Modal';
 import Button from '../../components/Button/Button';
-import Spinner from '../../components/Spinner/Spinner';
-import { sendWebSocketMessage } from '../../../WebSocketClient';
 
-const OrgPage = () => {
+const OrgPage = ({ data, getData, onData }) => {
+  console.log('data: ', data);
   const [showModal, setShowModal] = useState(false);
 
-  const [data, setData] = useState();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const { id } = useParams();
-
-  useEffect(() => {
-    (async () => {
-      try {
-        setIsLoading(true);
-        setError(false);
-
-        sendWebSocketMessage('getInfoCardById', { id }, receivedData => {
-          if (!data) {
-            setData(receivedData.data);
-          }
-          setIsLoading(false);
-        });
-      } catch (error) {
-        setError(true);
-        console.log(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, [id, data]);
+  const { id: infoId } = useParams();
 
   const onShowModal = () => {
     setShowModal(true);
@@ -47,43 +24,54 @@ const OrgPage = () => {
     setShowModal(false);
   };
 
+  useEffect(() => {
+    (async () => {
+      try {
+        getData({ id: infoId });
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  }, [infoId]);
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
   return (
     <>
       {showModal && (
         <Modal close={onCloseModal}>
-          <EditForm onClose={onCloseModal} />
+          <EditForm onClose={onCloseModal} data={data[0]} onData={onData} />
         </Modal>
       )}
-      {isLoading && <Spinner />}
-      {error && <div>Error loading data</div>}
-      {!error && !isLoading && data && (
-        <div className={styles.OrgPage}>
-          <table className={styles.datatable}>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Organization</th>
-                <th>Date of create</th>
-                <th>Settings</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr key={data.id}>
-                <td>{data.id}</td>
-                <td>
-                  <span>{data.name}</span>
-                </td>
-                <td>{data.orgname}</td>
-                <td>{data.datecreate}</td>
-                <td>
-                  <Button type="submit" icon={Icon} onClick={onShowModal} variant={styles.Button} />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      )}
+
+      <div className={styles.OrgPage}>
+        <table className={styles.datatable}>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Organization</th>
+              <th>Date of create</th>
+              <th>Settings</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr key={data[0]?.id}>
+              <td>{data[0]?.id}</td>
+              <td>
+                <span>{data[0]?.name}</span>
+              </td>
+              <td>{data[0]?.orgname}</td>
+              <td>{data[0]?.datecreate}</td>
+              <td>
+                <Button type="submit" icon={Icon} onClick={onShowModal} variant={styles.Button} />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </>
   );
 };
