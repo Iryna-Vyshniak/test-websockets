@@ -51,6 +51,7 @@ wsServer.on('connection', ws => {
 
   ws.on('message', async message => {
     const { event, data } = JSON.parse(message);
+    console.log('event: ', event);
     console.log('data: ', data);
 
     switch (event) {

@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import { notifyOptions } from '../../../shared/utils/notify';
 
 import styles from './Form.module.scss';
+
 import initialState from './initialState';
 import { ReactComponent as Icon } from './edit.svg';
 

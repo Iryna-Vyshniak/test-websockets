@@ -24,7 +24,6 @@ function App() {
 
   ws.onmessage = e => {
     const message = JSON.parse(e.data);
-    //console.log('message: ', message);
 
     if (message.event === 'getInfoCardById' || message.event === 'editNameCard') {
       setData(message.data.data);
@@ -58,11 +57,10 @@ function App() {
     ws.send(JSON.stringify(message));
   };
 
-  // console.log('info: ', info);
-  // console.log('dataAPP: ', data);
+  console.log('info: ', info);
   return (
     <>
-      <BrowserRouter basename="/test">
+      <BrowserRouter basename="/test-websockets">
         <Suspense fallback={<p>...Loading</p>}>
           <Routes>
             <Route path="/" element={<Layout />}>
